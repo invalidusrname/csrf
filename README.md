@@ -9,7 +9,7 @@ Usage
 There are a few different use cases for the CSRF module. The most common is to automatically add CSRF protection to 
 a form on your website. Below is a quick example:
 
-	<?php echo CSRF_Form::open('/login/', ); ?>
+	<?php echo CSRF_Form::open('/login/', array('method' => 'post')); ?>
 		<input type="text" name="email" id="email" class="focus" value="Email Address*" />
 		<input type="text" name="password" id="password" class="pw-focus" value="Password*" />
 		<button type="submit" class="button" value="Register Now">Submit</button>
