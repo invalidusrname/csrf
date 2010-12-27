@@ -61,10 +61,8 @@ class CSRF {
 		// grab current token if set (otherwise generate)
 		$current_token = self::token();
 		$current_token = self::encrypt($current_token, NULL, FALSE);
-		error_log('current token: ' . $current_token);
 		// decrypt the POSTed token
 		$token = self::encrypt($token, NULL, FALSE);
-		error_log('posted token: ' . $token);
 		// split the token to get the date
 		list($current_token, $time) = explode('||', $current_token);
 		// delete the old token
@@ -86,7 +84,7 @@ class CSRF {
 	{
 		if (!function_exists('mcrypt_encrypt')) {
 			if ($encrypt) {
-				return $expiration ? sha1($token) . '||' . time() : sha1($token) . '||0';
+				return sha1($token) . '||' . time();
 			}
 
 			return $token;
@@ -94,7 +92,7 @@ class CSRF {
 		$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 		if ($encrypt) {
-			$token .= $expiration ? '||' . $expiration : '||0';
+			$token .= '||' . time();
 			return bin2hex(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::$secret, $token, MCRYPT_MODE_ECB, $iv));
 		}
 
