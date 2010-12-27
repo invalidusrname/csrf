@@ -19,6 +19,7 @@ CSRF_Form overrides Kohana_Form and as such there are no differences in the para
 The open() method includes special handling for generating a hidden form element as well as javascript for generating
 and returning a new token to be used in coordination with AJAX handlers:
 
+	// below is the pertinent snippet of CSRF_Form::open()
 	if ($attributes['method'] = 'post') {
 		$output .= '<input type="hidden" name="csrf_token" id="csrf_token" value="' . CSRF::token(TRUE) . '" />';
 		$output .= CSRF::javascript();
