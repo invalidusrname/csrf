@@ -87,13 +87,12 @@ hidden input tokens updated accordingly.
 In order to validate that an AJAX post is not forged, you must remember to include the csrf_token javascript global variable in your 
 request. From there, you're going to want to validate it in your controller or model method:
 
-        if (Request::$method == 'POST' && Request::$is_ajax) {
-                if (!isset($_POST['csrf_token']) || CSRF::valid($_POST['csrf_token'])) {
-                        // possible cross-site request forgery
-                } else {
-                        // perform further form validation
-                }
-        }
+	if (Request::$method == 'POST' && Request::$is_ajax) {
+		if (!isset($_POST['csrf_token']) || CSRF::valid($_POST['csrf_token'])) {
+			// possible cross-site request forgery
+	} else {
+		// perform further form validation
+	}
 
 Requirements
 ------------
