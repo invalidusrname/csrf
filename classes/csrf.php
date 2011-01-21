@@ -10,15 +10,21 @@
 class CSRF {
 
 	/**
-	 * A secret salt, 32 chars. You should ALWAYS change this on a per project basis.
-	 */
-	private static $secret = 'jadf)&^DSFljas610FD907$*hNjRc04d';
-
-	/**
 	 * Static vars to ensure we don't re-run token generation. Don't change.
 	 */
 	private static $alreadyIncludedJavascript = FALSE;
 	private static $alreadySetToken = FALSE;
+
+
+    /**
+     * key to hash off of. Change this your csrf config file
+     *
+     * @return sting
+     */
+    private static function _secret_key()
+    {
+        return Kohana::config('csrf.secret');
+    }
 
 	/**
 	 * Returns the token in the session or generates a new one if none previously
@@ -38,8 +44,8 @@ class CSRF {
 			// get the user agent
 			$user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'No User Agent';
 			// create encrypted token based on secret, user agent, unique identifier, and action
-			$token = self::encrypt(self::$secret . $user_agent . uniqid(rand(), TRUE));
-			//$token = sha1(self::$secret . $user_agent . uniqid(rand(), TRUE)) . '|' . (time() + $expiration);
+			$token = self::encrypt(self::_secret_key() . $user_agent . uniqid(rand(), TRUE));
+			//$token = sha1(self::_secret_key() . $user_agent . uniqid(rand(), TRUE)) . '|' . (time() + $expiration);
 			// set in the session
 			Session::instance()->set('csrf-token', $token);
 		}
@@ -93,12 +99,12 @@ class CSRF {
 		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 		if ($encrypt) {
 			$token .= '||' . time();
-			return bin2hex(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::$secret, $token, MCRYPT_MODE_ECB, $iv));
+			return bin2hex(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::_secret_key(), $token, MCRYPT_MODE_ECB, $iv));
 		}
 
 		$len = strlen($token);
 		$token = pack("H" . $len, $token);
-		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, self::$secret, $token, MCRYPT_MODE_ECB, $iv));
+		return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, self::_secret_key(), $token, MCRYPT_MODE_ECB, $iv));
 	}
 
 	/**
